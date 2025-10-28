@@ -1,0 +1,25 @@
+<%- include('partials/header', { title: product.name }) %>
+
+<section class="detail-layout">
+  <div class="detail-photo-card">
+    <img src="<%= product.img %>" alt="<%= product.name %>" />
+  </div>
+
+  <div class="detail-info-card">
+    <h1 class="detail-name"><%= product.name %></h1>
+    <div class="detail-price"><%= product.price.toLocaleString('vi-VN') %>₫</div>
+    <div class="detail-desc"><%= product.desc %></div>
+
+    <form action="/cart/add/<%= product._id %>" method="POST" style="margin-top:1rem;">
+      <button class="btn-primary" style="width:100%;text-align:center;">
+        🛒 Thêm vào giỏ
+      </button>
+    </form>
+
+    <div style="margin-top:1rem;">
+      <a href="/" class="link-back">← Quay lại danh sách</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

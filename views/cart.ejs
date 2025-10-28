@@ -1,0 +1,83 @@
+<%- include('partials/header', { title: "Giỏ hàng" }) %>
+
+<section>
+  <h2 class="section-title">Giỏ hàng của bạn</h2>
+
+  <% if (cartItems.length === 0) { %>
+    <p style="font-size:.9rem;color:var(--text-dim);">Giỏ hàng đang trống.</p>
+    <a class="btn-primary" href="/" style="margin-top:1rem;display:inline-block;">
+      ← Tiếp tục mua cây
+    </a>
+  <% } else { %>
+
+    <div class="cart-card">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>Đơn giá</th>
+            <th>Số lượng</th>
+            <th>Tạm tính</th>
+            <th>Xóa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% cartItems.forEach(item => { %>
+            <tr>
+              <td>
+                <div class="cart-item-main">
+                  <img src="<%= item.img %>" class="cart-thumb" alt="<%= item.name %>">
+                  <div>
+                    <div class="product-name"><%= item.name %></div>
+                    <div class="product-desc">ID: <%= item.productId %></div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="product-price">
+                <%= item.price.toLocaleString('vi-VN') %>₫
+              </td>
+
+              <td>
+                <form class="qty-form" action="/cart/update/<%= item.productId %>" method="POST">
+                  <input
+                    type="number"
+                    name="qty"
+                    min="1"
+                    value="<%= item.qty %>"
+                    class="qty-input"
+                  />
+                  <button class="btn-primary" style="font-size:.8rem;padding:.4rem .6rem;">Cập nhật</button>
+                </form>
+              </td>
+
+              <td class="product-price">
+                <%= (item.price * item.qty).toLocaleString('vi-VN') %>₫
+              </td>
+
+              <td>
+                <form action="/cart/remove/<%= item.productId %>" method="POST">
+                  <button class="btn-danger" style="font-size:.8rem;padding:.4rem .6rem;">Xóa</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cart-summary">
+      Tổng cộng: <%= total.toLocaleString('vi-VN') %>₫
+    </div>
+
+    <div class="cart-actions">
+      <a class="btn-primary" href="/checkout" style="min-width:200px;text-align:center;">
+        Tiến hành đặt hàng (COD)
+      </a>
+      <a class="link-back" href="/">← Tiếp tục xem sản phẩm</a>
+    </div>
+
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

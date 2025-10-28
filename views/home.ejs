@@ -1,0 +1,27 @@
+<%- include('partials/header', { title: "Cây Cảnh Shop" }) %>
+
+<section>
+  <h2 class="section-title">Sản phẩm nổi bật</h2>
+
+  <div class="products-grid">
+    <% products.forEach(p => { %>
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <img src="<%= p.img %>" alt="<%= p.name %>" class="product-img" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-name"><%= p.name %></h3>
+          <div class="product-price"><%= p.price.toLocaleString('vi-VN') %>₫</div>
+          <% if (p.desc) { %>
+            <div class="product-desc"><%= p.desc %></div>
+          <% } %>
+          <div class="card-actions">
+            <a href="/product/<%= p._id %>" class="btn-primary">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

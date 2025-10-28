@@ -1,0 +1,20 @@
+<%- include('partials/header', { title: "Đặt hàng thành công" }) %>
+
+<section style="max-width:480px;text-align:center;display:grid;gap:1rem;">
+  <h2 class="section-title" style="color:#2e6b2e;">Đặt hàng thành công ✅</h2>
+
+  <p style="font-size:.95rem;color:#444;line-height:1.5;">
+    Cảm ơn bạn đã đặt hàng. Shop sẽ gọi xác nhận và giao cây tận nơi (COD).
+  </p>
+
+  <p style="font-size:.85rem;color:#666;">
+    Mã đơn hàng của bạn:
+    <span style="font-weight:600;color:#2e6b2e;"><%= orderId %></span>
+  </p>
+
+  <a class="btn btn-primary" href="/" style="display:inline-block;">
+    Tiếp tục xem cây khác
+  </a>
+</section>
+
+<%- include('partials/footer') %>

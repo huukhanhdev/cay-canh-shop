@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title || "Cây Cảnh Shop" %></title>
+
+  <!-- CSS chung -->
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="site-body">
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="brand">
+      <span class="brand-icon">🌿</span>
+      <span class="brand-text">Cây Cảnh Shop</span>
+    </a>
+
+    <nav class="main-nav">
+      <a href="/" class="nav-link">Trang chủ</a>
+      <a href="/cart" class="nav-link">
+        Giỏ hàng
+        <span class="badge"><%= cartCount || 0 %></span>
+      </a>
+      <a href="/contact" class="nav-link">Liên hệ</a>
+      <a href="/admin/products" class="nav-link nav-admin">Quản trị</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-content container">

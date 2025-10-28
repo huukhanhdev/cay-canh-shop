@@ -1,0 +1,42 @@
+<%- include('partials/header', { title: "Thêm sản phẩm mới" }) %>
+
+<section style="max-width:500px;">
+  <h2 class="section-title" style="margin-bottom:1rem;">Thêm cây cảnh mới</h2>
+
+  <form action="/admin/products/new" method="POST" enctype="multipart/form-data" style="display:grid;gap:1rem;">
+    <div>
+      <label for="name" style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Tên cây</label>
+      <input id="name" name="name" type="text" required
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
+    </div>
+
+    <div>
+      <label for="price" style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Giá (VND)</label>
+      <input id="price" name="price" type="number" min="0" required
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
+    </div>
+
+    <div>
+      <label for="photo" style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Ảnh sản phẩm</label>
+      <input id="photo" name="photo" type="file" accept="image/*" required
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;background-color:#fff;">
+      <p style="font-size:.75rem;color:#666;margin-top:.25rem;">Chọn hình từ máy (tối đa 5MB)</p>
+    </div>
+
+    <div>
+      <label for="desc" style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Mô tả</label>
+      <textarea id="desc" name="desc" rows="4"
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"></textarea>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;text-align:center;">
+      Lưu sản phẩm
+    </button>
+
+    <a class="back-link" href="/admin/products" style="text-align:center;display:block;font-size:.85rem;color:#2e6b2e;">
+      ← Quay lại danh sách
+    </a>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

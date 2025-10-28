@@ -1,0 +1,74 @@
+<%- include('partials/header', { title: "Xác nhận đơn hàng" }) %>
+
+<section style="display:grid;gap:1.5rem;max-width:600px;">
+  <h2 class="section-title">Xác nhận đơn hàng (COD)</h2>
+
+  <div style="background:#fff;border:1px solid #dfe9df;border-radius:12px;padding:1rem;">
+    <h3 style="margin-top:0;font-size:1rem;color:#2e6b2e;">Sản phẩm</h3>
+
+    <ul style="list-style:none;padding:0;margin:0;display:grid;gap:.75rem;">
+      <% items.forEach(it => { %>
+        <li style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="display:flex;gap:.75rem;">
+            <img src="<%= it.img %>" alt="<%= it.name %>" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
+            <div>
+              <div style="font-weight:500;"><%= it.name %></div>
+              <div style="font-size:.8rem;color:#666;">SL: <%= it.qty %></div>
+            </div>
+          </div>
+          <div style="font-weight:600;color:#2e6b2e;">
+            <%= (it.qty * it.price).toLocaleString('vi-VN') %>₫
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+
+    <div style="margin-top:1rem;text-align:right;font-weight:600;color:#2e6b2e;">
+      Tổng cộng: <%= total.toLocaleString('vi-VN') %>₫
+    </div>
+  </div>
+
+  <form action="/checkout" method="POST" style="display:grid;gap:1rem;">
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Tên người nhận</label>
+      <input
+        type="text"
+        name="customerName"
+        required
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+      />
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Số điện thoại</label>
+      <input
+        type="text"
+        name="phone"
+        required
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+      />
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Địa chỉ giao hàng</label>
+      <textarea
+        name="address"
+        rows="3"
+        required
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+      ></textarea>
+    </div>
+
+    <button
+      class="btn btn-primary"
+      style="width:100%;text-align:center;font-size:1rem;padding:.75rem 1rem;">
+      Đặt hàng COD
+    </button>
+
+    <a href="/cart" style="text-align:center;font-size:.85rem;color:#2e6b2e;text-decoration:none;">
+      ← Quay lại giỏ hàng
+    </a>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

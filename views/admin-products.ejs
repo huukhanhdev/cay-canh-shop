@@ -1,0 +1,41 @@
+<%- include('partials/header', { title: "Quản lý sản phẩm" }) %>
+
+<section>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <h2 class="section-title">Tất cả sản phẩm</h2>
+    <a class="btn" href="/admin/products/new">+ Thêm sản phẩm</a>
+  </div>
+
+  <table style="width:100%;border-collapse:collapse;font-size:0.9rem;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #dfe9df;">
+    <thead style="background:#f0f5ef;">
+      <tr>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Ảnh</th>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Tên</th>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Giá</th>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Mô tả</th>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(p => { %>
+        <tr>
+          <td style="padding:.75rem;vertical-align:top;">
+            <img src="<%= p.img %>" alt="<%= p.name %>" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
+          </td>
+          <td style="padding:.75rem;vertical-align:top;font-weight:500;"><%= p.name %></td>
+          <td style="padding:.75rem;vertical-align:top;color:#2e6b2e;font-weight:600;">
+            <%= p.price.toLocaleString('vi-VN') %>₫
+          </td>
+          <td style="padding:.75rem;vertical-align:top;color:#555;max-width:300px;">
+            <%= p.desc %>
+          </td>
+          <td style="padding:.75rem;vertical-align:top;font-size:.75rem;color:#888;">
+            <%= p._id %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🌿 Cây Cảnh Shop</h1>
+      <nav>
+        <a href="/">Trang chủ</a>
+        <a href="#">Giỏ hàng (0)</a>
+        <a href="#">Liên hệ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <%= new Date().getFullYear() %> Cây Cảnh Shop • "Mang mảng xanh về bàn làm việc của bạn"</p>
+    </div>
+  </footer>
+</body>
+</html>
