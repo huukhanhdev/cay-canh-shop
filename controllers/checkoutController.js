@@ -28,34 +28,54 @@ exports.getCheckoutPage = (req, res) => {
   res.render('checkout', { items, total });
 };
 
+
 exports.postCheckout = async (req, res) => {
   try {
-    if (!req.session || !req.session.cart || req.session.cart.length === 0) {
+    // Lấy thông tin form giao hàng từ req.body
+    const { customerName, phone, address, note } = req.body;
+
+    // Lấy giỏ hàng từ session
+    const cart = req.session.cart || [];
+    if (!cart.length) {
       return res.redirect('/cart');
     }
 
-    const { customerName, phone, address } = req.body;
-    const { items, total } = cartSnapshot(req.session.cart);
+    // Tính tổng tiền
+    const total = cart.reduce((sum, item) => {
+      return sum + item.price * item.qty;
+    }, 0);
 
-    // tạo đơn hàng
-    const order = await Order.create({
+    // Tạo order mới
+    const newOrder = new Order({
+      userId: req.session.userId || null, // nếu user chưa login thì vẫn cho null (tùy luật shop)
+      items: cart.map(item => ({
+        productId: item.productId,
+        name: item.name,
+        price: item.price,
+        qty: item.qty
+      })),
+      total,
       customerName,
       phone,
       address,
-      items,
-      total,
-      status: 'pending'
+      note,
+      status: 'pending',       // trạng thái mặc định
+      createdAt: new Date()
     });
 
-    console.log('📦 New order:', order._id);
+    await newOrder.save();
 
-    // clear giỏ sau khi đặt
+    // Clear giỏ sau khi đặt
     req.session.cart = [];
 
-    // chuyển tới trang cảm ơn
-    res.render('checkout-success', { orderId: order._id });
+    // ⚠️ Quan trọng: TRUYỀN orderId vào view
+    res.render('checkout-success', {
+      title: 'Đặt hàng thành công',
+      orderId: newOrder._id
+    });
+
   } catch (err) {
-    console.error('Checkout error:', err);
-    res.status(500).send('Có lỗi khi tạo đơn hàng');
+    console.error('Lỗi khi checkout:', err);
+    res.status(500).send('Có lỗi khi đặt hàng.');
   }
 };

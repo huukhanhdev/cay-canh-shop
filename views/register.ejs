@@ -1,0 +1,25 @@
+<%- include('partials/header', { title: "Đăng ký tài khoản" }) %>
+
+<section class="checkout-wrapper">
+  <h2 class="section-title">Tạo tài khoản mới</h2>
+
+  <% if (message) { %>
+    <div class="alert" style="color:red; font-weight:600; margin-bottom:1rem;"><%= message %></div>
+  <% } %>
+
+  <form action="/register" method="POST" class="order-form">
+    <label for="username">Tài khoản</label>
+    <input type="text" name="username" required>
+
+    <label for="password">Mật khẩu</label>
+    <input type="password" name="password" required>
+
+    <button type="submit" class="btn-primary" style="margin-top:1rem;">Đăng ký</button>
+
+    <p style="margin-top:1rem;">
+      Đã có tài khoản? <a href="/login" class="link">Đăng nhập</a>
+    </p>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

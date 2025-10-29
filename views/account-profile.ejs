@@ -1,0 +1,89 @@
+<%- include('partials/header', { title: "Hồ sơ cá nhân" }) %>
+
+<section class="profile-wrapper" style="max-width: 800px; margin: 2rem auto;">
+  <h2 class="section-title">Hồ sơ cá nhân</h2>
+
+  <% if (success) { %>
+    <div class="alert" style="color:green;font-weight:600;margin-bottom:1rem;">
+      <%= success %>
+    </div>
+  <% } %>
+
+  <!-- CHẾ ĐỘ XEM -->
+  <div id="viewMode" style="display:block;">
+    <div class="card" style="padding:1.5rem; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+      <div style="margin-bottom:1rem;">
+        <b>👤 Họ tên:</b> <%= user.fullName || '—' %>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <b>📧 Email:</b> <%= user.email || '—' %>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <b>📱 Số điện thoại:</b> <%= user.phone || '—' %>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <b>🏠 Địa chỉ giao hàng:</b><br/>
+        <%= user.address || '—' %>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <b>🎯 Quyền:</b> <%= user.role === 'admin' ? 'Quản trị viên' : 'Khách hàng' %><br/>
+        <b>🏆 Điểm thưởng:</b> <%= user.loyaltyPoints || 0 %> điểm
+      </div>
+
+      <button id="editBtn" class="btn-primary" style="margin-top:1rem;">✏️ Sửa thông tin</button>
+    </div>
+
+    <div style="margin-top:2rem;">
+      <h3 style="font-size:1rem; font-weight:600; margin-bottom:.5rem;">Bảo mật</h3>
+      <p style="font-size:.9rem; color:#444; line-height:1.4;">
+        Muốn đổi mật khẩu?
+        <a href="/account/change-password" class="link">Đổi mật khẩu tại đây →</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- CHẾ ĐỘ CHỈNH SỬA -->
+  <div id="editMode" style="display:none;">
+    <form class="order-form" action="/account/profile" method="POST"
+      style="padding:1.5rem; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+
+      <h3 style="font-weight:600; margin-bottom:1rem;">Cập nhật thông tin</h3>
+
+      <label>Họ và tên</label>
+      <input type="text" name="fullName" value="<%= user.fullName || '' %>" />
+
+      <label>Email</label>
+      <input type="email" name="email" value="<%= user.email || '' %>" />
+
+      <label>Số điện thoại</label>
+      <input type="text" name="phone" value="<%= user.phone || '' %>" />
+
+      <label>Địa chỉ giao hàng</label>
+      <textarea name="address" rows="3"><%= user.address || '' %></textarea>
+
+      <div style="margin-top:1.5rem;">
+        <button class="btn-primary" type="submit">💾 Lưu thay đổi</button>
+        <button type="button" id="cancelEdit" class="btn-secondary" style="margin-left:.5rem;">Hủy</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  const viewMode = document.getElementById('viewMode');
+  const editMode = document.getElementById('editMode');
+  const editBtn = document.getElementById('editBtn');
+  const cancelEdit = document.getElementById('cancelEdit');
+
+  editBtn.addEventListener('click', () => {
+    viewMode.style.display = 'none';
+    editMode.style.display = 'block';
+  });
+
+  cancelEdit.addEventListener('click', () => {
+    editMode.style.display = 'none';
+    viewMode.style.display = 'block';
+  });
+</script>
+
+<%- include('partials/footer') %>

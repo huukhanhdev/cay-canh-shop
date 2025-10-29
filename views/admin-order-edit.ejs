@@ -1,0 +1,46 @@
+<%- include('partials/header', { title: "Chỉnh sửa đơn hàng" }) %>
+
+<section class="checkout-wrapper">
+  <h2 class="section-title">Chỉnh sửa thông tin khách</h2>
+
+  <div class="checkout-box">
+    <form action="/admin/orders/<%= order._id %>/update" method="POST" class="order-form">
+
+      <label for="customerName">Tên khách hàng</label>
+      <input
+        id="customerName"
+        type="text"
+        name="customerName"
+        required
+        value="<%= order.customerName || '' %>"
+      />
+
+      <label for="phone">Số điện thoại</label>
+      <input
+        id="phone"
+        type="text"
+        name="phone"
+        required
+        value="<%= order.phone || '' %>"
+      />
+
+      <label for="address">Địa chỉ giao hàng</label>
+      <textarea
+        id="address"
+        name="address"
+        rows="3"
+        required
+      ><%= order.address || '' %></textarea>
+
+      <div class="order-btns">
+        <button type="submit" class="btn-primary">💾 Lưu thay đổi</button>
+
+        <a href="/admin/orders/<%= order._id %>" class="btn-secondary">
+          ← Quay lại chi tiết đơn
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

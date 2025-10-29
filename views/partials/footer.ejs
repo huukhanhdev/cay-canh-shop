@@ -25,6 +25,26 @@
     © <%= new Date().getFullYear() %> Cây Cảnh Shop. All rights reserved.
   </div>
 </footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dropdown = document.querySelector('.admin-dropdown');
+  const trigger = dropdown?.querySelector('.admin-trigger');
+  const menu = dropdown?.querySelector('.admin-menu');
+
+  if (trigger && menu) {
+    // Khi click vào nút Admin
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation(); // không lan ra document
+      menu.classList.toggle('show');
+    });
+
+    // Khi click ra ngoài, đóng lại
+    document.addEventListener('click', () => {
+      menu.classList.remove('show');
+    });
+  }
+});
+</script>
 
 </body>
 </html>

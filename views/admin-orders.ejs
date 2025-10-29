@@ -1,0 +1,69 @@
+<%- include('partials/header', { title: "Quản lý đơn hàng" }) %>
+
+<section>
+  <h2 class="section-title">Danh sách đơn hàng</h2>
+
+  <% if (orders.length === 0) { %>
+    <p style="font-size:.9rem;color:var(--text-dim);">Chưa có đơn nào.</p>
+  <% } else { %>
+    <div class="cart-card">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>SĐT</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Thời gian</th>
+            <th>Xem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach(o => { %>
+            <tr>
+              <td style="font-size:.8rem;font-weight:600;color:var(--accent-main);">
+                <%= o._id %>
+              </td>
+
+              <td>
+                <div style="font-weight:500;"><%= o.customerName %></div>
+                <div style="font-size:.75rem;color:var(--text-dim);"><%= o.address %></div>
+              </td>
+
+              <td style="white-space:nowrap;">
+                <%= o.phone %>
+              </td>
+
+              <td style="font-weight:600;color:var(--accent-main);white-space:nowrap;">
+                <%= o.total.toLocaleString('vi-VN') %>₫
+              </td>
+
+              <td style="text-transform:uppercase;font-size:.7rem;font-weight:600;">
+                <%= o.status %>
+              </td>
+
+              <td style="font-size:.75rem;color:var(--text-dim);white-space:nowrap;">
+                <%= o.createdAt.toLocaleString('vi-VN') %>
+              </td>
+
+              <td>
+                <a class="btn-primary"
+                   style="font-size:.75rem;padding:.4rem .6rem;"
+                   href="/admin/orders/<%= o._id %>">
+                  Chi tiết
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+
+  <div style="margin-top:1.5rem;">
+    <a class="link-back" href="/admin/products">← Quay lại quản lý sản phẩm</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

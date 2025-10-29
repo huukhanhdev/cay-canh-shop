@@ -12,19 +12,61 @@
 
 <header class="site-header">
   <div class="container header-inner">
+    <!-- LOGO / BRAND -->
     <a href="/" class="brand">
       <span class="brand-icon">🌿</span>
       <span class="brand-text">Cây Cảnh Shop</span>
     </a>
-
+    
+    <!-- MAIN NAV -->
     <nav class="main-nav">
       <a href="/" class="nav-link">Trang chủ</a>
+
       <a href="/cart" class="nav-link">
         Giỏ hàng
         <span class="badge"><%= cartCount || 0 %></span>
       </a>
+
       <a href="/contact" class="nav-link">Liên hệ</a>
-      <a href="/admin/products" class="nav-link nav-admin">Quản trị</a>
+
+      <% /* Nếu là KHÁCH ĐÃ ĐĂNG NHẬP (customer), show "Đơn hàng của tôi" */ %>
+      <% if (isLoggedIn && role === 'customer') { %>
+  <a href="/orders/my" class="nav-link">🧾 Đơn hàng của tôi</a>
+  <a href="/account/profile" class="nav-link">👤 Tài khoản</a>
+<% } %>
+
+<% if (isLoggedIn && role === 'admin') { %>
+  <div class="admin-dropdown">
+    <button class="admin-trigger">
+      Admin <span class="admin-caret">▾</span>
+    </button>
+    <div class="admin-menu">
+      <a href="/admin/products" class="admin-item">🛠 Quản lý sản phẩm</a>
+      <a href="/admin/orders" class="admin-item">📦 Quản lý đơn hàng</a>
+      <a href="/admin/dashboard" class="admin-item">📊 Dashboard</a>
+    </div>
+  </div>
+  <a href="/account/profile" class="nav-link">👤 Hồ sơ</a>
+<% } %>
+
+
+      <% /* Nếu CHƯA đăng nhập -> Hiện nút Đăng nhập / Đăng ký */ %>
+      <% if (!isLoggedIn) { %>
+        <a href="/login" class="nav-link">Đăng nhập</a>
+        <a href="/register" class="nav-link">Đăng ký</a>
+      <% } else { %>
+      <% /* Nếu ĐÃ đăng nhập -> Hiện nút Đăng xuất kèm username */ %>
+        <form action="/logout" method="POST" style="display:inline;">
+          <button
+            type="submit"
+            class="nav-link btn-logout"
+            style="background:none;border:none;cursor:pointer;padding:0;"
+          >
+            🚪 Đăng xuất (<%= username %>)
+          </button>
+        </form>
+      <% } %>
+
     </nav>
   </div>
 </header>

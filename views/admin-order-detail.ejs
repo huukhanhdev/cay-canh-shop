@@ -1,0 +1,110 @@
+<%- include('partials/header', { title: "Chi tiết đơn hàng" }) %>
+
+<section class="checkout-wrapper">
+  <h2 class="section-title">Chi tiết đơn hàng</h2>
+
+  <<div class="checkout-box">
+  <h3>Thông tin đơn hàng</h3>
+
+  <div style="font-size:.9rem;line-height:1.5;display:grid;row-gap:.5rem;">
+    <div><strong>Mã đơn:</strong> <%= order._id %></div>
+
+    <div><strong>Trạng thái hiện tại:</strong>
+      <% if (order.status === 'pending') { %>
+        ⏳ Chờ xác nhận
+      <% } else if (order.status === 'confirmed') { %>
+        ✅ Đã xác nhận
+      <% } else if (order.status === 'shipped') { %>
+        🚚 Đang giao
+      <% } else if (order.status === 'done') { %>
+        🎉 Hoàn tất
+      <% } else if (order.status === 'cancelled') { %>
+        ❌ Đã hủy
+      <% } else { %>
+        <%= order.status %>
+      <% } %>
+    </div>
+
+    <div><strong>Thời gian tạo:</strong> <%= order.createdAt.toLocaleString('vi-VN') %></div>
+    <% if (order.updatedAt) { %>
+      <div><strong>Cập nhật cuối:</strong> <%= order.updatedAt.toLocaleString('vi-VN') %></div>
+    <% } %>
+  </div>
+
+  <!-- đổi trạng thái -->
+  <form id="statusForm"
+        action="/admin/orders/<%= order._id %>/status"
+        method="POST"
+        class="status-form"
+        style="margin-top:1rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;">
+    <label for="status" style="font-weight:600;">Cập nhật trạng thái:</label>
+
+    <select id="status" name="status" class="status-select">
+      <option value="pending"   <%= order.status === 'pending' ? 'selected' : '' %>>⏳ Chờ xác nhận</option>
+      <option value="confirmed" <%= order.status === 'confirmed' ? 'selected' : '' %>>✅ Đã xác nhận</option>
+      <option value="shipped"   <%= order.status === 'shipped' ? 'selected' : '' %>>🚚 Đang giao</option>
+      <option value="done"      <%= order.status === 'done' ? 'selected' : '' %>>🎉 Hoàn tất</option>
+      <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>❌ Đã hủy</option>
+    </select>
+
+    <button type="submit" class="btn-secondary">Cập nhật trạng thái</button>
+  </form>
+
+  <!-- nút sửa thông tin khách -->
+  <div style="margin-top:1rem;">
+    <a class="btn-primary" href="/admin/orders/<%= order._id %>/edit">
+      ✍️ Sửa thông tin khách
+    </a>
+  </div>
+
+  <!-- nút xoá đơn -->
+  <form action="/admin/orders/<%= order._id %>/delete"
+        method="POST"
+        onsubmit="return confirm('Bạn có chắc muốn xoá đơn hàng này không?');"
+        style="margin-top:1rem;">
+    <button type="submit" class="btn-danger">🗑️ Xóa đơn hàng</button>
+  </form>
+</div>
+
+  <div class="checkout-box">
+    <h3>Thông tin khách hàng</h3>
+    <div style="font-size:.9rem;line-height:1.5;">
+      <div><strong>Tên:</strong> <%= order.customerName %></div>
+      <div><strong>SĐT:</strong> <%= order.phone %></div>
+      <div><strong>Địa chỉ:</strong> <%= order.address %></div>
+    </div>
+  </div>
+
+  <div class="checkout-box">
+    <h3>Sản phẩm</h3>
+    <ul class="checkout-items">
+      <% order.items.forEach(it => { %>
+        <li class="checkout-item-row">
+          <div class="checkout-item-left">
+            <img src="<%= it.img %>" alt="<%= it.name %>" class="checkout-thumb" />
+            <div>
+              <div class="checkout-item-name"><%= it.name %></div>
+              <div class="checkout-item-meta">SL: <%= it.qty %></div>
+              <div class="checkout-item-meta">Đơn giá: <%= it.price.toLocaleString('vi-VN') %>₫</div>
+            </div>
+          </div>
+          <div class="checkout-item-price">
+            <%= (it.qty * it.price).toLocaleString('vi-VN') %>₫
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+
+    <div class="checkout-total">
+      Tổng cộng: <%= order.total.toLocaleString('vi-VN') %>₫
+    </div>
+  </div>
+
+  <div>
+    <a class="btn-primary" href="/admin/orders" style="text-align:center;display:inline-block;">
+      ← Quay lại danh sách đơn
+    </a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

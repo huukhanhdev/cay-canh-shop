@@ -1,0 +1,74 @@
+<%- include('partials/header', { title: title || "Đơn hàng của tôi" }) %>
+
+<section class="container" style="margin-top:2rem; max-width:900px;">
+  <h2 style="margin-bottom:1rem;">🧾 Đơn hàng của tôi</h2>
+
+  <% if (!orders || orders.length === 0) { %>
+    <p>Bạn chưa có đơn hàng nào 🌱</p>
+    <p><a href="/" class="btn-primary" style="text-decoration:none;">Tiếp tục mua cây</a></p>
+  <% } else { %>
+    <table class="order-table" style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="text-align:left; background:#f4faf4;">
+          <th style="padding:.5rem; border-bottom:1px solid #dfe8d8;">Mã đơn</th>
+          <th style="padding:.5rem; border-bottom:1px solid #dfe8d8;">Ngày đặt</th>
+          <th style="padding:.5rem; border-bottom:1px solid #dfe8d8;">Sản phẩm</th>
+          <th style="padding:.5rem; border-bottom:1px solid #dfe8d8;">Tổng tiền</th>
+          <th style="padding:.5rem; border-bottom:1px solid #dfe8d8;">Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:.5rem; font-size:0.9rem; color:#555;">
+              <%= o._id %>
+            </td>
+
+            <td style="padding:.5rem; font-size:0.9rem;">
+              <%= o.createdAt.toLocaleString('vi-VN') %>
+            </td>
+
+            <td style="padding:.5rem; font-size:0.9rem; line-height:1.4;">
+              <% o.items.forEach(it => { %>
+                <div>
+                  <strong><%= it.name %></strong> × <%= it.qty %>
+                  (<%= formatCurrency(it.price) %> mỗi cây)
+                </div>
+              <% }) %>
+            </td>
+
+            <td style="padding:.5rem; font-weight:600; color:#2f4f2f;">
+              <%= formatCurrency(o.total) %>
+            </td>
+
+            <td style="padding:.5rem;">
+              <% if (o.status === 'pending') { %>
+                <span class="badge" style="background:#fff3cd; color:#856404; padding:2px 6px; border-radius:4px; font-size:0.8rem;">
+                  Chờ xử lý
+                </span>
+              <% } else if (o.status === 'preparing') { %>
+                <span class="badge" style="background:#cfe2ff; color:#084298; padding:2px 6px; border-radius:4px; font-size:0.8rem;">
+                  Đang chuẩn bị
+                </span>
+              <% } else if (o.status === 'shipping') { %>
+                <span class="badge" style="background:#d1e7dd; color:#0f5132; padding:2px 6px; border-radius:4px; font-size:0.8rem;">
+                  Đang giao
+                </span>
+              <% } else if (o.status === 'done') { %>
+                <span class="badge" style="background:#e2ffe2; color:#155724; padding:2px 6px; border-radius:4px; font-size:0.8rem;">
+                  Hoàn tất
+                </span>
+              <% } else if (o.status === 'canceled') { %>
+                <span class="badge" style="background:#f8d7da; color:#721c24; padding:2px 6px; border-radius:4px; font-size:0.8rem;">
+                  Đã hủy
+                </span>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,32 @@
+<%- include('partials/header', { title: title || "Yêu cầu đăng nhập" }) %>
+
+<section class="container" style="max-width:500px; margin-top:2rem; text-align:center;">
+  <div style="background:#fffbea; border:1px solid #f5d36a; border-radius:8px; padding:1.5rem;">
+    <h2 style="color:#8a6d00; margin-bottom:0.5rem; font-size:1.2rem;">
+      Bạn cần đăng nhập
+    </h2>
+    <p style="color:#5a4f20; line-height:1.4; font-size:0.95rem;">
+      Bạn phải đăng nhập hoặc đăng ký để có thể thêm sản phẩm vào giỏ hàng 🛒
+    </p>
+
+    <div style="display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin-top:1rem;">
+      <a href="/login" class="btn-primary"
+         style="text-decoration:none;">
+        Đăng nhập
+      </a>
+
+      <a href="/register" class="btn-secondary"
+         style="text-decoration:none;">
+        Đăng ký tài khoản
+      </a>
+    </div>
+
+    <div style="margin-top:1rem;">
+      <a href="javascript:history.back()" style="font-size:.8rem; color:#666; text-decoration:none;">
+        ⬅ Quay lại sản phẩm
+      </a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,35 @@
+<%- include('partials/header', { title: "Đăng nhập" }) %>
+
+<section class="checkout-wrapper">
+  <h2 class="section-title">Đăng nhập</h2>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert" style="color:red; font-weight:600; margin-bottom:1rem;"><%= message %></div>
+  <% } %>
+
+  <% if (typeof msg !== 'undefined' && msg === 'logout') { %>
+    <div class="alert alert-success" style="color:green; font-weight:600; margin-bottom:1rem;">
+      👋 Bạn đã đăng xuất thành công!
+    </div>
+  <% } %>
+
+  <form action="/login" method="POST" class="order-form">
+    <label for="username">Tài khoản</label>
+    <input type="text" name="username" required>
+
+    <label for="password">Mật khẩu</label>
+    <input type="password" name="password" required>
+
+    <button type="submit" class="btn-primary" style="margin-top:1rem;">Đăng nhập</button>
+
+    <p style="margin-top:1rem;">Chưa có tài khoản?
+      <a href="/register" class="link">Đăng ký ngay</a>
+    </p>
+
+    <p style="margin-top:0.5rem;">
+      <a href="/forgot-password" class="link">Quên mật khẩu?</a>
+    </p>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,78 @@
+<%- include('partials/header', { title: "Bảng điều khiển" }) %>
+
+<section class="admin-dashboard container" style="max-width:1200px; margin:2rem auto;">
+  <h1 class="section-title" style="margin-bottom:1rem;">📊 Bảng điều khiển</h1>
+
+  <!-- Stats cards -->
+  <div class="stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem;">
+    <div class="stat-card" style="background:#f5fff5;border:1px solid #cde9cd;border-radius:.75rem;padding:1rem;">
+      <div class="stat-label" style="color:#4d7a4d;font-size:.9rem;">Tổng số đơn hàng</div>
+      <div class="stat-value" style="font-size:1.8rem;font-weight:600;color:#2e6b2e;">
+        <%= totalOrders %>
+      </div>
+    </div>
+
+    <div class="stat-card" style="background:#f5faff;border:1px solid #cfe2ff;border-radius:.75rem;padding:1rem;">
+      <div class="stat-label" style="color:#1a4f7a;font-size:.9rem;">Doanh thu (đơn hoàn tất)</div>
+      <div class="stat-value" style="font-size:1.8rem;font-weight:600;color:#103a5c;">
+        <%= totalRevenue.toLocaleString('vi-VN') %> đ
+      </div>
+    </div>
+
+    <div class="stat-card" style="background:#fffdf5;border:1px solid #ffe9a6;border-radius:.75rem;padding:1rem;">
+      <div class="stat-label" style="color:#8a6d1f;font-size:.9rem;">Số khách hàng</div>
+      <div class="stat-value" style="font-size:1.8rem;font-weight:600;color:#5c4a10;">
+        <%= totalCustomers %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions quick links -->
+  <div style="margin-top:2rem; display:flex; flex-wrap:wrap; gap:1rem;">
+    <a href="/admin/products" class="btn-primary" style="text-decoration:none;padding:.75rem 1rem;border-radius:.5rem;background:#2e6b2e;color:#fff;font-weight:600;">
+      🌱 Quản lý sản phẩm
+    </a>
+
+    <a href="/admin/orders" class="btn-primary" style="text-decoration:none;padding:.75rem 1rem;border-radius:.5rem;background:#1a4f7a;color:#fff;font-weight:600;">
+      📦 Quản lý đơn hàng
+    </a>
+
+    <a href="/admin/users" class="btn-primary" style="text-decoration:none;padding:.75rem 1rem;border-radius:.5rem;background:#8a6d1f;color:#fff;font-weight:600;">
+      👤 Quản lý khách hàng
+    </a>
+  </div>
+
+  <!-- Best sellers -->
+  <div style="margin-top:3rem;">
+    <h2 class="section-title" style="margin-bottom:1rem;">🌟 Top cây bán chạy</h2>
+    <% if (bestSellers.length === 0) { %>
+      <p>Chưa có thống kê bán chạy.</p>
+    <% } else { %>
+      <div class="table-wrapper" style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; min-width:400px;">
+          <thead>
+            <tr style="background:#f0f0f0;">
+              <th style="text-align:left;padding:.5rem;border:1px solid #ccc;">#</th>
+              <th style="text-align:left;padding:.5rem;border:1px solid #ccc;">Tên cây</th>
+              <th style="text-align:right;padding:.5rem;border:1px solid #ccc;">Số lượng đã bán</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bestSellers.forEach((p, idx) => { %>
+              <tr>
+                <td style="padding:.5rem;border:1px solid #ccc;"><%= idx + 1 %></td>
+                <td style="padding:.5rem;border:1px solid #ccc;"><%= p.name %></td>
+                <td style="padding:.5rem;border:1px solid #ccc;text-align:right;">
+                  <%= p.qty %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+</section>
+
+<%- include('partials/footer') %>
