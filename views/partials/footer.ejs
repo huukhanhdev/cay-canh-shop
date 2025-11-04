@@ -6,13 +6,11 @@
       <div class="footer-brand">🌿 Cây Cảnh Shop</div>
       <div class="footer-sub">Cây đẹp - Giao tận nhà - Thanh lọc không khí</div>
     </div>
-
     <div class="footer-col">
       <div class="footer-heading">Liên hệ</div>
       <div class="footer-line">📞 090x xxx xxx</div>
       <div class="footer-line">📍 TP.HCM</div>
     </div>
-
     <div class="footer-col">
       <div class="footer-heading">Hỗ trợ</div>
       <a class="footer-link" href="/cart">Giỏ hàng</a>
@@ -20,31 +18,23 @@
       <a class="footer-link" href="/admin/products">Quản lý sản phẩm</a>
     </div>
   </div>
-
-  <div class="footer-bottom">
-    © <%= new Date().getFullYear() %> Cây Cảnh Shop. All rights reserved.
-  </div>
+  <div class="footer-bottom">© <%= new Date().getFullYear() %> Cây Cảnh Shop. All rights reserved.</div>
 </footer>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const dropdown = document.querySelector('.admin-dropdown');
-  const trigger = dropdown?.querySelector('.admin-trigger');
-  const menu = dropdown?.querySelector('.admin-menu');
-
-  if (trigger && menu) {
-    // Khi click vào nút Admin
-    trigger.addEventListener('click', (e) => {
-      e.stopPropagation(); // không lan ra document
-      menu.classList.toggle('show');
-    });
-
-    // Khi click ra ngoài, đóng lại
-    document.addEventListener('click', () => {
-      menu.classList.remove('show');
-    });
-  }
-});
+  document.addEventListener('click', (e) => {
+    // đóng tất cả menu
+    document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+    // nếu click vào 1 nút dropdown
+    const btn = e.target.closest('.dropdown-btn');
+    if (btn) {
+      const wrap = btn.closest('.dropdown');
+      wrap.querySelector('.dropdown-menu')?.classList.add('show');
+      e.stopPropagation();
+    }
+  });
 </script>
+
 
 </body>
 </html>

@@ -1,0 +1,78 @@
+<%- include('partials/header', { title: "Sản phẩm" }) %>
+
+<section class="filter-bar" style="margin-bottom:1rem;">
+  <form action="/products" method="GET" style="display:grid;grid-template-columns:1fr 220px 220px 220px 220px auto;gap:.75rem;align-items:center;">
+    <!-- Tìm kiếm -->
+    <div>
+      <label class="form-label">Tìm kiếm</label>
+      <input class="form-input" type="text" name="q" placeholder="Tên cây, công dụng..." value="<%= (query && query.q) || '' %>">
+    </div>
+
+    <!-- Danh mục -->
+    <div>
+      <label class="form-label">Danh mục</label>
+      <select class="form-input" name="category">
+        <option value="all">— Tất cả —</option>
+        <% (categories || []).forEach(c => { %>
+          <option value="<%= c._id %>" <%= (query && String(query.category) === String(c._id)) ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <!-- Giá tối thiểu -->
+    <div>
+      <label class="form-label">Giá tối thiểu</label>
+      <input class="form-input" type="number" name="minPrice" placeholder="VD: 50000" value="<%= (query && query.minPrice) || '' %>">
+    </div>
+
+    <!-- Giá tối đa -->
+    <div>
+      <label class="form-label">Giá tối đa</label>
+      <input class="form-input" type="number" name="maxPrice" placeholder="VD: 300000" value="<%= (query && query.maxPrice) || '' %>">
+    </div>
+
+    <!-- Sắp xếp -->
+    <div>
+      <label class="form-label">Sắp xếp</label>
+      <select class="form-input" name="sort">
+        <option value="newest" <%= (!query || query.sort === 'newest') ? 'selected' : '' %>>Mới nhất</option>
+        <option value="priceAsc" <%= (query && query.sort === 'priceAsc') ? 'selected' : '' %>>Giá tăng dần</option>
+        <option value="priceDesc" <%= (query && query.sort === 'priceDesc') ? 'selected' : '' %>>Giá giảm dần</option>
+      </select>
+    </div>
+
+    <!-- Còn hàng -->
+    <label style="display:flex;align-items:center;gap:.5rem;margin-top:1.5rem;">
+      <input type="checkbox" name="inStock" value="1" <%= (query && query.inStock === '1') ? 'checked' : '' %>>
+      Còn hàng
+    </label>
+
+    <button class="btn btn-primary" style="height:40px;margin-top:1.5rem;">Lọc</button>
+  </form>
+</section>
+
+<section class="product-grid">
+  <% if (!products || products.length === 0) { %>
+    <div class="empty-box">Chưa có sản phẩm phù hợp.</div>
+  <% } else { %>
+    <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;">
+      <% products.forEach(p => { %>
+        <a href="/product/<%= p._id %>" class="product-card" style="display:block;border:1px solid #dfe9df;border-radius:12px;overflow:hidden;background:#fff;">
+          <img src="<%= p.img %>" alt="<%= p.name %>" style="width:100%;height:180px;object-fit:cover;">
+          <div style="padding:.75rem;">
+            <div style="font-weight:600;color:#254a25;"><%= p.name %></div>
+            <div style="font-size:.8rem;color:#f5a623;margin-top:.2rem;">
+              ⭐ <%= Number(p.avgRating || 0).toFixed(1) %>/5
+            </div>
+            <div style="color:#2e6b2e;font-weight:700;margin-top:.25rem;"><%= (p.price||0).toLocaleString('vi-VN') %>₫</div>
+          <% if (p.description) { %>
+            <div style="font-size:.85rem;color:#666;margin-top:.25rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= p.description %></div>
+          <% } %>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,5 +1,14 @@
 <%- include('partials/header', { title: product.name }) %>
 
+<% if (reviewMessage) { %>
+  <div style="max-width:720px;margin:1rem auto;padding:.8rem 1rem;border-radius:10px;
+    border:1px solid <%= reviewMessage.type === 'success' ? '#badbcc' : '#f5c2c7' %>;
+    background:<%= reviewMessage.type === 'success' ? '#d1e7dd' : '#f8d7da' %>;
+    color:<%= reviewMessage.type === 'success' ? '#0f5132' : '#842029' %>;">
+    <%= reviewMessage.text %>
+  </div>
+<% } %>
+
 <section class="detail-layout">
   <div class="detail-photo-card">
     <img src="<%= product.img %>" alt="<%= product.name %>" />
@@ -7,8 +16,17 @@
 
   <div class="detail-info-card">
     <h1 class="detail-name"><%= product.name %></h1>
+    <div style="display:flex;align-items:center;gap:.5rem;color:#f5a623;font-size:1rem;margin-bottom:.5rem;">
+      <span>⭐</span>
+      <span style="font-weight:600;"><%= avgRating %>/5</span>
+      <span style="font-size:.85rem;color:#666;">(<%= reviewCount %> đánh giá)</span>
+    </div>
+
     <div class="detail-price"><%= product.price.toLocaleString('vi-VN') %>₫</div>
-    <div class="detail-desc"><%= product.desc %></div>
+    <div style="margin:.25rem 0;font-size:.9rem;color:#2e6b2e;">
+      Tồn kho: <%= product.inStock || 0 %> sản phẩm
+    </div>
+    <div class="detail-desc"><%= product.description %></div>
 
     <form action="/cart/add/<%= product._id %>" method="POST" style="margin-top:1rem;">
       <button class="btn-primary" style="width:100%;text-align:center;">
@@ -20,6 +38,77 @@
       <a href="/" class="link-back">← Quay lại danh sách</a>
     </div>
   </div>
+</section>
+
+<section style="margin-top:2rem;display:grid;gap:1.5rem;">
+  <% if (plantDetail) { %>
+    <div class="detail-box">
+      <h3 class="section-title" style="font-size:1.1rem;">Thông tin chăm sóc</h3>
+      <ul class="detail-list">
+        <li><strong>Chiều cao:</strong> <%= plantDetail.height || '—' %></li>
+        <li><strong>Độ khó chăm:</strong> <%= plantDetail.difficulty || '—' %></li>
+        <li><strong>Ánh sáng:</strong> <%= plantDetail.lightRequirement || '—' %></li>
+        <li><strong>Nhu cầu nước:</strong> <%= plantDetail.waterDemand || '—' %></li>
+      </ul>
+    </div>
+  <% } %>
+
+  <% if (potDetail) { %>
+    <div class="detail-box">
+      <h3 class="section-title" style="font-size:1.1rem;">Thông tin chậu</h3>
+      <ul class="detail-list">
+        <li><strong>Chất liệu:</strong> <%= potDetail.material || '—' %></li>
+        <li><strong>Họa tiết:</strong> <%= potDetail.pattern || '—' %></li>
+        <li><strong>Kích thước:</strong> <%= potDetail.dimension || '—' %></li>
+        <li><strong>Màu sắc:</strong> <%= potDetail.color || '—' %></li>
+      </ul>
+    </div>
+  <% } %>
+</section>
+
+<section style="margin-top:2rem;">
+  <h2 class="section-title">Đánh giá sản phẩm</h2>
+
+  <% if (reviews && reviews.length > 0) { %>
+    <ul style="list-style:none;padding:0;margin:0;display:grid;gap:1rem;">
+      <% reviews.forEach(r => { %>
+        <li style="border:1px solid #dfe9df;border-radius:12px;padding:1rem;background:#fff;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+            <strong><%= r.userName %></strong>
+            <span style="color:#f5a623;">⭐ <%= r.rating %>/5</span>
+          </div>
+          <div style="font-size:.9rem;color:#444;line-height:1.5;"><%= r.comment || 'Không có nhận xét.' %></div>
+          <div style="font-size:.75rem;color:#888;margin-top:.5rem;">
+            <%= new Date(r.createdAt).toLocaleString('vi-VN') %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p style="font-size:.9rem;color:#666;">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+  <% } %>
+
+  <% if (canReview) { %>
+    <div style="margin-top:1.5rem;">
+      <h3 style="font-size:1rem;margin-bottom:.75rem;">Gửi đánh giá của bạn</h3>
+      <form action="/product/<%= product._id %>/review" method="POST" style="display:grid;gap:.75rem;">
+        <label class="form-label" for="rating">Số sao (1-5)</label>
+        <input id="rating" name="rating" type="number" min="1" max="5" required class="form-input" style="max-width:120px;">
+
+        <label class="form-label" for="comment">Nhận xét</label>
+        <textarea id="comment" name="comment" rows="3" class="form-input" placeholder="Chia sẻ cảm nhận của bạn..."></textarea>
+
+        <button class="btn btn-primary" style="max-width:200px;">Gửi đánh giá</button>
+      </form>
+      <p style="font-size:.75rem;color:#666;margin-top:.5rem;">
+        (Chỉ khách đã mua sản phẩm mới có thể gửi đánh giá.)
+      </p>
+    </div>
+  <% } else { %>
+    <p style="margin-top:1.5rem;font-size:.85rem;color:#666;">
+      <a href="/login">Đăng nhập</a> để gửi đánh giá cho sản phẩm.
+    </p>
+  <% } %>
 </section>
 
 <%- include('partials/footer') %>

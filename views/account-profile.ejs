@@ -13,21 +13,19 @@
   <div id="viewMode" style="display:block;">
     <div class="card" style="padding:1.5rem; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
       <div style="margin-bottom:1rem;">
-        <b>👤 Họ tên:</b> <%= user.fullName || '—' %>
+        <b>👤 Họ tên:</b> <%= user.name || '—' %>
       </div>
       <div style="margin-bottom:1rem;">
         <b>📧 Email:</b> <%= user.email || '—' %>
       </div>
       <div style="margin-bottom:1rem;">
-        <b>📱 Số điện thoại:</b> <%= user.phone || '—' %>
-      </div>
-      <div style="margin-bottom:1rem;">
         <b>🏠 Địa chỉ giao hàng:</b><br/>
-        <%= user.address || '—' %>
+        <% const addr = user.shippingAddress || {}; %>
+        <%= [addr.number, addr.street, addr.district, addr.city].filter(Boolean).join(', ') || '—' %>
       </div>
       <div style="margin-bottom:1rem;">
-        <b>🎯 Quyền:</b> <%= user.role === 'admin' ? 'Quản trị viên' : 'Khách hàng' %><br/>
-        <b>🏆 Điểm thưởng:</b> <%= user.loyaltyPoints || 0 %> điểm
+        <b>🎯 Quyền:</b> <%= user.isAdmin ? 'Quản trị viên' : 'Khách hàng' %><br/>
+        <b>🏆 Điểm thưởng:</b> <%= user.loyaltyPoint || 0 %> điểm
       </div>
 
       <button id="editBtn" class="btn-primary" style="margin-top:1rem;">✏️ Sửa thông tin</button>
@@ -50,16 +48,23 @@
       <h3 style="font-weight:600; margin-bottom:1rem;">Cập nhật thông tin</h3>
 
       <label>Họ và tên</label>
-      <input type="text" name="fullName" value="<%= user.fullName || '' %>" />
+      <input type="text" name="name" value="<%= user.name || '' %>" />
 
       <label>Email</label>
       <input type="email" name="email" value="<%= user.email || '' %>" />
 
-      <label>Số điện thoại</label>
-      <input type="text" name="phone" value="<%= user.phone || '' %>" />
+      <% const shipping = user.shippingAddress || {}; %>
+      <label>Số nhà</label>
+      <input type="text" name="addressNumber" value="<%= shipping.number || '' %>">
 
-      <label>Địa chỉ giao hàng</label>
-      <textarea name="address" rows="3"><%= user.address || '' %></textarea>
+      <label>Đường</label>
+      <input type="text" name="street" value="<%= shipping.street || '' %>">
+
+      <label>Quận/Huyện</label>
+      <input type="text" name="district" value="<%= shipping.district || '' %>">
+
+      <label>Tỉnh/Thành phố</label>
+      <input type="text" name="city" value="<%= shipping.city || '' %>">
 
       <div style="margin-top:1.5rem;">
         <button class="btn-primary" type="submit">💾 Lưu thay đổi</button>

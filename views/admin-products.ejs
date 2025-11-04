@@ -12,25 +12,39 @@
         <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Ảnh</th>
         <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Tên</th>
         <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Giá</th>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Danh mục</th>
         <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Mô tả</th>
-        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">ID</th>
+        <th style="text-align:left;padding:.75rem;border-bottom:1px solid #dfe9df;">Thao tác</th>
       </tr>
     </thead>
     <tbody>
-      <% products.forEach(p => { %>
+      <% (products || []).forEach(p => { %>
         <tr>
           <td style="padding:.75rem;vertical-align:top;">
             <img src="<%= p.img %>" alt="<%= p.name %>" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
           </td>
+
           <td style="padding:.75rem;vertical-align:top;font-weight:500;"><%= p.name %></td>
+
           <td style="padding:.75rem;vertical-align:top;color:#2e6b2e;font-weight:600;">
-            <%= p.price.toLocaleString('vi-VN') %>₫
+            <%= (p.price || 0).toLocaleString('vi-VN') %>₫
           </td>
+
+          <td style="padding:.75rem;vertical-align:top;">
+            <span style="background:#eef7ee;color:#2e6b2e;padding:.2rem .5rem;border-radius:999px;font-size:.8rem;">
+              <%= p.categoryName || '—' %>
+            </span>
+          </td>
+
           <td style="padding:.75rem;vertical-align:top;color:#555;max-width:300px;">
-            <%= p.desc %>
+            <%= p.description %>
           </td>
-          <td style="padding:.75rem;vertical-align:top;font-size:.75rem;color:#888;">
-            <%= p._id %>
+
+          <td style="padding:.75rem;vertical-align:top;">
+            <a class="btn" href="/admin/products/<%= p._id %>/edit">Sửa</a>
+            <form action="/admin/products/<%= p._id %>/delete" method="POST" style="display:inline-block;margin-left:.5rem;" onsubmit="return confirm('Xoá sản phẩm này?');">
+              <button class="btn btn-danger" type="submit">Xoá</button>
+            </form>
           </td>
         </tr>
       <% }) %>

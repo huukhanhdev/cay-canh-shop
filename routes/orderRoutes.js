@@ -11,4 +11,7 @@ router.get('/my', requireLogin, orderController.getMyOrders);
 // Xem chi tiết 1 đơn (chỉ nếu đơn đó thuộc user)
 router.get('/:id', requireLogin, orderController.getOrderDetail);
 
+// Hủy đơn hàng
+router.post('/:id/cancel', requireLogin, orderController.cancelOrder);
+
 module.exports = router;

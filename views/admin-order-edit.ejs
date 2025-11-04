@@ -1,36 +1,91 @@
 <%- include('partials/header', { title: "Chỉnh sửa đơn hàng" }) %>
 
 <section class="checkout-wrapper">
-  <h2 class="section-title">Chỉnh sửa thông tin khách</h2>
+  <h2 class="section-title">Chỉnh sửa thông tin đơn hàng</h2>
 
   <div class="checkout-box">
     <form action="/admin/orders/<%= order._id %>/update" method="POST" class="order-form">
 
-      <label for="customerName">Tên khách hàng</label>
+      <fieldset style="border:none;padding:0;margin:0;">
+        <legend style="font-weight:600;margin-bottom:.5rem;">Địa chỉ giao hàng</legend>
+
+        <label for="addressNumber">Số nhà</label>
+        <input
+          id="addressNumber"
+          type="text"
+          name="addressNumber"
+          value="<%= (order.address && order.address.number) || '' %>"
+        />
+
+        <label for="street">Đường</label>
+        <input
+          id="street"
+          type="text"
+          name="street"
+          value="<%= (order.address && order.address.street) || '' %>"
+        />
+
+        <label for="district">Quận/Huyện</label>
+        <input
+          id="district"
+          type="text"
+          name="district"
+          value="<%= (order.address && order.address.district) || '' %>"
+        />
+
+        <label for="city">Tỉnh/Thành phố</label>
+        <input
+          id="city"
+          type="text"
+          name="city"
+          value="<%= (order.address && order.address.city) || '' %>"
+        />
+      </fieldset>
+
+      <label for="shippingFee">Phí vận chuyển (₫)</label>
       <input
-        id="customerName"
-        type="text"
-        name="customerName"
-        required
-        value="<%= order.customerName || '' %>"
+        id="shippingFee"
+        type="number"
+        name="shippingFee"
+        min="0"
+        step="1000"
+        value="<%= order.shippingFee || 0 %>"
       />
 
-      <label for="phone">Số điện thoại</label>
+      <label for="discount">Giảm giá (₫)</label>
       <input
-        id="phone"
-        type="text"
-        name="phone"
-        required
-        value="<%= order.phone || '' %>"
+        id="discount"
+        type="number"
+        name="discount"
+        min="0"
+        step="1000"
+        value="<%= order.discount || 0 %>"
       />
 
-      <label for="address">Địa chỉ giao hàng</label>
+      <label for="pointUsed">Điểm đã sử dụng (số điểm)</label>
+      <input
+        id="pointUsed"
+        type="number"
+        name="pointUsed"
+        min="0"
+        value="<%= order.pointUsed || 0 %>"
+      />
+
+      <label for="status">Trạng thái</label>
+      <select id="status" name="status">
+        <option value="pending"   <%= order.status === 'pending' ? 'selected' : '' %>>⏳ Chờ xử lý</option>
+        <option value="preparing" <%= order.status === 'preparing' ? 'selected' : '' %>>🛠️ Chuẩn bị</option>
+        <option value="shipping"  <%= order.status === 'shipping' ? 'selected' : '' %>>🚚 Đang giao</option>
+        <option value="done"      <%= order.status === 'done' ? 'selected' : '' %>>🎉 Hoàn tất</option>
+        <option value="canceled"  <%= order.status === 'canceled' ? 'selected' : '' %>>❌ Đã hủy</option>
+      </select>
+
+      <label for="note">Ghi chú</label>
       <textarea
-        id="address"
-        name="address"
+        id="note"
+        name="note"
         rows="3"
-        required
-      ><%= order.address || '' %></textarea>
+      ><%= order.note || '' %></textarea>
 
       <div class="order-btns">
         <button type="submit" class="btn-primary">💾 Lưu thay đổi</button>

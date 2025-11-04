@@ -13,44 +13,41 @@ exports.getLogin = (req, res) => {
 
 exports.postLogin = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    // 1. tìm user theo username
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email: email?.toLowerCase().trim() });
 
     if (!user) {
       return res.render('login', {
         title: 'Đăng nhập',
-        message: 'Sai tài khoản hoặc mật khẩu',
+        message: 'Sai email hoặc mật khẩu',
         msg: null,
       });
     }
 
-    // 2. so sánh password người dùng nhập với hash trong DB
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
       return res.render('login', {
         title: 'Đăng nhập',
-        message: 'Sai tài khoản hoặc mật khẩu',
+        message: 'Sai email hoặc mật khẩu',
         msg: null,
       });
     }
 
-    // 3. Lưu user vào session
     req.session.user = {
       _id: user._id,
-      username: user.username,
-      role: user.role,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      loyaltyPoint: user.loyaltyPoint,
     };
 
-    // 4. Save session rồi redirect đúng role
     req.session.save(() => {
-      if (user.role === 'admin') {
+      if (user.isAdmin) {
         return res.redirect('/admin/dashboard');
-      } else {
-        return res.redirect('/');
       }
+      return res.redirect('/');
     });
   } catch (err) {
     console.error('❌ Lỗi đăng nhập:', err);
@@ -79,37 +76,46 @@ exports.getRegister = (req, res) => {
 // POST /register
 exports.postRegister = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { name, email, password } = req.body;
 
-    // check trùng username
-    const existed = await User.findOne({ username });
-    if (existed) {
+    const normalizedEmail = email?.toLowerCase().trim();
+
+    if (!normalizedEmail) {
       return res.render('register', {
         title: 'Đăng ký',
-        message: 'Tài khoản đã tồn tại, hãy chọn tên khác.'
+        message: 'Email không hợp lệ.',
       });
     }
 
-    // tạo user mới với role mặc định là 'customer'
+    const existed = await User.findOne({ email: normalizedEmail });
+    if (existed) {
+      return res.render('register', {
+        title: 'Đăng ký',
+        message: 'Email đã tồn tại, hãy sử dụng email khác.',
+      });
+    }
+
     const newUser = new User({
-      username,
+      name,
+      email: normalizedEmail,
       password,
-      role: 'customer'
+      isAdmin: false,
     });
 
     await newUser.save();
 
-    // auto đăng nhập ngay sau khi đăng ký
-    req.session.userId = newUser._id;
-    req.session.role = newUser.role;
-    req.session.username = newUser.username;
+    req.session.user = {
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      isAdmin: newUser.isAdmin,
+      loyaltyPoint: newUser.loyaltyPoint,
+    };
 
     return res.redirect('/');
-
   } catch (err) {
     console.error('Lỗi đăng ký:', err);
     res.status(500).send('Lỗi server khi đăng ký');
   }
 };
-
 

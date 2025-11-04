@@ -3,14 +3,29 @@
 <section style="max-width:480px;text-align:center;display:grid;gap:1rem;">
   <h2 class="section-title" style="color:#2e6b2e;">Đặt hàng thành công ✅</h2>
 
-  <p style="font-size:.95rem;color:#444;line-height:1.5;">
-    Cảm ơn bạn đã đặt hàng. Shop sẽ gọi xác nhận và giao cây tận nơi (COD).
-  </p>
+  <div style="font-size:.95rem;color:#444;line-height:1.5;">
+    <p>Cảm ơn bạn đã đặt hàng. Shop sẽ liên hệ xác nhận và giao hàng sớm nhất.</p>
+    <p>
+      Mã đơn hàng của bạn:
+      <span style="font-weight:600;color:#2e6b2e;"><%= orderId %></span>
+    </p>
+  </div>
 
-  <p style="font-size:.85rem;color:#666;">
-    Mã đơn hàng của bạn:
-    <span style="font-weight:600;color:#2e6b2e;"><%= orderId %></span>
-  </p>
+  <div style="background:#fff;border:1px solid #dfe9df;border-radius:12px;padding:1rem;text-align:left;">
+    <h3 style="margin:0 0 .75rem;color:#2e6b2e;font-size:1rem;">Tổng kết</h3>
+    <div style="font-size:.9rem;color:#444;margin-bottom:.25rem;">Tạm tính: <%= formatCurrency(summary.subtotal) %></div>
+    <div style="font-size:.9rem;color:#444;margin-bottom:.25rem;">Phí vận chuyển: <%= formatCurrency(summary.shippingFee) %></div>
+    <div style="font-size:.9rem;color:#444;margin-bottom:.25rem;">Giảm giá: -<%= formatCurrency(summary.discount) %></div>
+    <% if (points.used > 0) { %>
+      <div style="font-size:.9rem;color:#444;margin-bottom:.5rem;">Điểm đã sử dụng: -<%= formatCurrency(summary.pointsValue) %> (<%= points.used %> điểm)</div>
+    <% } %>
+    <strong style="display:block;font-size:1rem;color:#1f5b1f;">Tổng thanh toán: <%= formatCurrency(summary.total) %></strong>
+  </div>
+
+  <div style="font-size:.85rem;color:#555;">
+    <div>Điểm đã dùng: <strong><%= points.used %></strong></div>
+    <div>Điểm sẽ được cộng sau khi đơn hoàn tất: <strong><%= points.earned %></strong></div>
+  </div>
 
   <a class="btn btn-primary" href="/" style="display:inline-block;">
     Tiếp tục xem cây khác

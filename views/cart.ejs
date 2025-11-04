@@ -10,6 +10,12 @@
     </a>
   <% } else { %>
 
+    <% if (message) { %>
+      <div style="margin-bottom:1rem;padding:.75rem;border-radius:10px;border:1px solid #f5c2c7;background:#f8d7da;color:#842029;">
+        <%= message %>
+      </div>
+    <% } %>
+
     <div class="cart-card">
       <table class="cart-table">
         <thead>
@@ -26,25 +32,32 @@
             <tr>
               <td>
                 <div class="cart-item-main">
-                  <img src="<%= item.img %>" class="cart-thumb" alt="<%= item.name %>">
+                  <img src="<%= item.productImg || '/images/default-plant.jpg' %>" class="cart-thumb" alt="<%= item.productName %>">
                   <div>
-                    <div class="product-name"><%= item.name %></div>
-                    <div class="product-desc">ID: <%= item.productId %></div>
+                    <div class="product-name"><%= item.productName %></div>
+                    <% if (item.variant && (item.variant.variantName || item.variant.color || item.variant.size || item.variant.material)) { %>
+                      <div class="product-desc">
+                        <% if (item.variant.variantName) { %>Biến thể: <%= item.variant.variantName %><% } %>
+                        <% if (item.variant.color) { %> | Màu: <%= item.variant.color %><% } %>
+                        <% if (item.variant.size) { %> | Size: <%= item.variant.size %><% } %>
+                        <% if (item.variant.material) { %> | Chất liệu: <%= item.variant.material %><% } %>
+                      </div>
+                    <% } %>
                   </div>
                 </div>
               </td>
 
               <td class="product-price">
-                <%= item.price.toLocaleString('vi-VN') %>₫
+                <%= formatCurrency(item.price) %>
               </td>
 
               <td>
-                <form class="qty-form" action="/cart/update/<%= item.productId %>" method="POST">
+                <form class="qty-form" action="/cart/update/<%= item.productID %>" method="POST">
                   <input
                     type="number"
                     name="qty"
                     min="1"
-                    value="<%= item.qty %>"
+                    value="<%= item.quantity %>"
                     class="qty-input"
                   />
                   <button class="btn-primary" style="font-size:.8rem;padding:.4rem .6rem;">Cập nhật</button>
@@ -52,11 +65,11 @@
               </td>
 
               <td class="product-price">
-                <%= (item.price * item.qty).toLocaleString('vi-VN') %>₫
+                <%= formatCurrency(item.subTotal) %>
               </td>
 
               <td>
-                <form action="/cart/remove/<%= item.productId %>" method="POST">
+                <form action="/cart/remove/<%= item.productID %>" method="POST">
                   <button class="btn-danger" style="font-size:.8rem;padding:.4rem .6rem;">Xóa</button>
                 </form>
               </td>
@@ -67,7 +80,15 @@
     </div>
 
     <div class="cart-summary">
-      Tổng cộng: <%= total.toLocaleString('vi-VN') %>₫
+      <div>Tạm tính: <%= formatCurrency(cartSummary.subtotal) %></div>
+      <div>Phí vận chuyển: <%= formatCurrency(cartSummary.shippingFee) %></div>
+      <% if (cartSummary.discount > 0) { %>
+        <div>Giảm giá: -<%= formatCurrency(cartSummary.discount) %></div>
+      <% } %>
+      <% if (cartSummary.pointsUsed > 0) { %>
+        <div>Điểm đã dùng: -<%= formatCurrency(cartSummary.pointsValue) %> (<%= cartSummary.pointsUsed %> điểm)</div>
+      <% } %>
+      <strong style="display:block;margin-top:.5rem;">Tổng cộng: <%= formatCurrency(cartSummary.total) %></strong>
     </div>
 
     <div class="cart-actions">

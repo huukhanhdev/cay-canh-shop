@@ -1,0 +1,36 @@
+<%- include('partials/header', { title: "Quản lý danh mục" }) %>
+
+<section>
+  <div class="flex-between" style="margin-bottom:1rem;">
+    <h2 class="section-title">Danh mục</h2>
+    <a class="btn btn-primary" href="/admin/categories/new">+ Thêm danh mục</a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Slug</th>
+        <th>Danh mục cha</th>
+        <th style="width:160px;">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% categories.forEach(c => { %>
+        <tr>
+          <td><%= c.name %></td>
+          <td><%= c.slug %></td>
+          <td><%= c.parentName %></td>
+          <td>
+            <a class="btn btn-sm" href="/admin/categories/<%= c._id %>/edit">Sửa</a>
+            <form action="/admin/categories/<%= c._id %>/delete" method="POST" style="display:inline-block" onsubmit="return confirm('Xóa danh mục?');">
+              <button class="btn btn-sm btn-danger">Xóa</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+
+<%- include('partials/footer') %>

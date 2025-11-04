@@ -1,0 +1,28 @@
+<%- include('partials/header', { title }) %>
+
+<section style="max-width:520px;">
+  <h2 class="section-title" style="margin-bottom:1rem;"><%= title %></h2>
+
+  <form action="<%= mode==='create' ? '/admin/categories/new' : '/admin/categories/' + category._id + '/edit' %>" method="POST" style="display:grid;gap:1rem;">
+    <div>
+      <label for="name" class="form-label">Tên danh mục</label>
+      <input id="name" name="name" type="text" required class="form-input" value="<%= category ? category.name : '' %>">
+    </div>
+
+    <div>
+      <label for="parentCategoryID" class="form-label">Danh mục cha (tuỳ chọn)</label>
+      <select id="parentCategoryID" name="parentCategoryID" class="form-input">
+        <option value="">— Không có —</option>
+        <% parents.forEach(p => { %>
+          <option value="<%= p._id %>" <%= category && category.parentCategoryID && String(category.parentCategoryID)===String(p._id) ? 'selected' : '' %>><%= p.name %></option>
+        <% }) %>
+      </select>
+      <p class="hint">Dùng để tạo cây phân cấp (VD: “Cây trong nhà” → “Cây để bàn”).</p>
+    </div>
+
+    <button class="btn btn-primary"><%= mode==='create' ? 'Tạo danh mục' : 'Lưu thay đổi' %></button>
+    <a href="/admin/categories" class="back-link">← Quay lại</a>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

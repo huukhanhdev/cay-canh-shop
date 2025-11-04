@@ -1,0 +1,101 @@
+<%- include('partials/header', { title: title || "Chi tiết đơn hàng" }) %>
+
+<% if (message) { %>
+  <div style="max-width:720px;margin:1rem auto;padding:.8rem 1rem;border-radius:10px;
+    border:1px solid <%= message.type === 'success' ? '#badbcc' : '#f5c2c7' %>;
+    background:<%= message.type === 'success' ? '#d1e7dd' : '#f8d7da' %>;
+    color:<%= message.type === 'success' ? '#0f5132' : '#842029' %>;
+  ">
+    <%= message.text %>
+  </div>
+<% } %>
+
+<section class="checkout-wrapper">
+  <h2 class="section-title">Thông tin đơn hàng</h2>
+
+  <div class="checkout-box">
+    <div style="font-size:.9rem;color:#444;line-height:1.6;">
+      <% const statusMap = { pending: 'Chờ xử lý', preparing: 'Đang chuẩn bị', shipping: 'Đang giao', done: 'Hoàn tất', canceled: 'Đã hủy' }; %>
+      <div><strong>Mã đơn:</strong> <%= order._id %></div>
+      <div><strong>Trạng thái:</strong> <%= statusMap[order.status] || order.status %></div>
+      <div><strong>Ngày đặt:</strong> <%= new Date(order.orderDate).toLocaleString('vi-VN') %></div>
+      <div><strong>Địa chỉ giao:</strong> <%= order.addressText || '—' %></div>
+    </div>
+  </div>
+
+  <div class="checkout-box">
+    <h3>Sản phẩm</h3>
+    <% if (!order.items || !order.items.length) { %>
+      <p style="font-size:.9rem;color:#666;">Đơn hàng không có sản phẩm.</p>
+    <% } else { %>
+      <ul class="checkout-items">
+        <% order.items.forEach(item => { %>
+          <li class="checkout-item-row">
+            <div class="checkout-item-left">
+              <img src="<%= item.image || '/images/default-plant.jpg' %>" alt="<%= item.productName %>" class="checkout-thumb" />
+              <div>
+                <div class="checkout-item-name"><%= item.productName %></div>
+                <div class="checkout-item-meta">SL: <%= item.quantity %></div>
+                <div class="checkout-item-meta">Đơn giá: <%= formatCurrency(item.price) %></div>
+                <% if (item.variant && (item.variant.variantName || item.variant.color || item.variant.size || item.variant.material)) { %>
+                  <div class="checkout-item-meta">
+                    <% if (item.variant.variantName) { %>Biến thể: <%= item.variant.variantName %><% } %>
+                    <% if (item.variant.color) { %> | Màu: <%= item.variant.color %><% } %>
+                    <% if (item.variant.size) { %> | Size: <%= item.variant.size %><% } %>
+                    <% if (item.variant.material) { %> | Chất liệu: <%= item.variant.material %><% } %>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+            <div class="checkout-item-price">
+              <%= formatCurrency(item.subTotal) %>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+      <div class="checkout-total">
+        <div>Tạm tính: <%= formatCurrency(order.summary?.subtotal || 0) %></div>
+        <div>Phí vận chuyển: <%= formatCurrency(order.shippingFee || 0) %></div>
+        <div>Giảm giá: -<%= formatCurrency(order.discount || 0) %></div>
+      <div>Điểm đã dùng: -<%= formatCurrency(order.summary?.pointsValue || 0) %> (<%= (order.summary?.pointsUsed ?? order.pointUsed) || 0 %> điểm)</div>
+      <strong>Tổng cộng: <%= formatCurrency(order.totalPrice || 0) %></strong>
+    </div>
+    <p style="font-size:.85rem;color:#555;margin-top:.5rem;">
+      <% if (order.status === 'done') { %>
+        Bạn đã nhận <strong><%= order.pointEarned || 0 %></strong> điểm thưởng cho đơn hàng này.
+      <% } else if (order.status !== 'canceled') { %>
+        Bạn sẽ nhận <strong><%= order.pointEarned || 0 %></strong> điểm sau khi đơn được hoàn tất.
+      <% } %>
+    </p>
+  </div>
+
+  <a class="btn-primary" href="/orders/my" style="display:inline-block;margin-top:1rem;">← Quay lại đơn của tôi</a>
+</section>
+
+<% if (order.canCancel) { %>
+  <section class="checkout-wrapper" style="max-width:600px;">
+    <div class="checkout-box">
+      <h3>Hủy đơn hàng</h3>
+      <form action="/orders/<%= order._id %>/cancel" method="POST" class="order-form" style="display:grid;gap:.75rem;">
+        <label for="reason">Lý do hủy</label>
+        <textarea id="reason" name="reason" rows="3" required class="form-input" placeholder="Vì sao bạn muốn hủy đơn?"></textarea>
+        <button type="submit" class="btn-danger">🛑 Xác nhận hủy đơn</button>
+      </form>
+      <p style="font-size:.8rem;color:#666;margin-top:.5rem;">Đơn chỉ có thể hủy khi đang ở trạng thái &ldquo;Chờ xử lý&rdquo; hoặc &ldquo;Đang chuẩn bị&rdquo;.</p>
+    </div>
+  </section>
+<% } else if (order.status === 'canceled' && order.cancelReason) { %>
+  <section class="checkout-wrapper" style="max-width:600px;">
+    <div class="checkout-box" style="background:#f8d7da;border-color:#f5c2c7;color:#842029;">
+      <h3>Lý do hủy</h3>
+      <p style="margin:0;white-space:pre-line;"><%= order.cancelReason %></p>
+      <% if (order.canceledAt) { %>
+        <p style="margin:0;font-size:.8rem;color:#6c757d;">Thời gian hủy: <%= new Date(order.canceledAt).toLocaleString('vi-VN') %></p>
+      <% } %>
+    </div>
+  </section>
+<% } %>
+
+<%- include('partials/footer') %>

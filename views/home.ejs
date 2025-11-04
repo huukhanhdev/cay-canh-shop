@@ -11,9 +11,12 @@
         </div>
         <div class="product-info">
           <h3 class="product-name"><%= p.name %></h3>
+          <div style="font-size:.85rem;color:#f5a623;margin-bottom:.25rem;">
+            ⭐ <%= Number(p.avgRating || 0).toFixed(1) %>/5
+          </div>
           <div class="product-price"><%= p.price.toLocaleString('vi-VN') %>₫</div>
-          <% if (p.desc) { %>
-            <div class="product-desc"><%= p.desc %></div>
+          <% if (p.description) { %>
+            <div class="product-desc"><%= p.description %></div>
           <% } %>
           <div class="card-actions">
             <a href="/product/<%= p._id %>" class="btn-primary">Xem chi tiết</a>

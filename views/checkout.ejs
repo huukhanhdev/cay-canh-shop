@@ -1,68 +1,167 @@
 <%- include('partials/header', { title: "Xác nhận đơn hàng" }) %>
 
 <section style="display:grid;gap:1.5rem;max-width:600px;">
-  <h2 class="section-title">Xác nhận đơn hàng (COD)</h2>
+  <h2 class="section-title">Xác nhận đơn hàng</h2>
+
+  <% if (errors && errors.length) { %>
+    <div class="alert alert-error" style="border:1px solid #f5c2c7;background:#f8d7da;color:#842029;padding:0.75rem;border-radius:8px;">
+      <ul style="margin:0;padding-left:1.2rem;">
+        <% errors.forEach(err => { %>
+          <li><%= err %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
 
   <div style="background:#fff;border:1px solid #dfe9df;border-radius:12px;padding:1rem;">
     <h3 style="margin-top:0;font-size:1rem;color:#2e6b2e;">Sản phẩm</h3>
 
     <ul style="list-style:none;padding:0;margin:0;display:grid;gap:.75rem;">
-      <% items.forEach(it => { %>
+      <% cartItems.forEach(it => { %>
         <li style="display:flex;justify-content:space-between;align-items:flex-start;">
           <div style="display:flex;gap:.75rem;">
-            <img src="<%= it.img %>" alt="<%= it.name %>" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
+            <img src="<%= it.productImg || '/images/default-plant.jpg' %>" alt="<%= it.productName %>" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:1px solid #cfe3cf;background:#fff;">
             <div>
-              <div style="font-weight:500;"><%= it.name %></div>
-              <div style="font-size:.8rem;color:#666;">SL: <%= it.qty %></div>
+              <div style="font-weight:500;"><%= it.productName %></div>
+              <div style="font-size:.8rem;color:#666;">SL: <%= it.quantity %></div>
+              <% if (it.variant && (it.variant.variantName || it.variant.color || it.variant.size || it.variant.material)) { %>
+                <div style="font-size:.75rem;color:#777;">
+                  <% if (it.variant.variantName) { %>Biến thể: <%= it.variant.variantName %><% } %>
+                  <% if (it.variant.color) { %> | Màu: <%= it.variant.color %><% } %>
+                  <% if (it.variant.size) { %> | Size: <%= it.variant.size %><% } %>
+                  <% if (it.variant.material) { %> | Chất liệu: <%= it.variant.material %><% } %>
+                </div>
+              <% } %>
             </div>
           </div>
           <div style="font-weight:600;color:#2e6b2e;">
-            <%= (it.qty * it.price).toLocaleString('vi-VN') %>₫
+            <%= formatCurrency(it.subTotal) %>
           </div>
         </li>
       <% }) %>
     </ul>
 
     <div style="margin-top:1rem;text-align:right;font-weight:600;color:#2e6b2e;">
-      Tổng cộng: <%= total.toLocaleString('vi-VN') %>₫
+      Tạm tính: <%= formatCurrency(summary.subtotal) %>
     </div>
+
+    <div style="margin-top:.5rem;text-align:right;font-size:.9rem;color:#444;">
+      Phí vận chuyển: <%= formatCurrency(summary.shippingFee) %><br/>
+      Giảm giá: -<%= formatCurrency(summary.discount) %><br/>
+      <% if (summary.pointsUsed > 0) { %>
+        Điểm đã dùng: -<%= formatCurrency(summary.pointsValue) %> (<%= summary.pointsUsed %> điểm)
+      <% } %>
+    </div>
+
+    <div style="margin-top:.75rem;text-align:right;font-weight:700;color:#1f5b1f;">
+      Tổng thanh toán: <%= formatCurrency(summary.total) %>
+    </div>
+    <p style="margin-top:.5rem;font-size:.85rem;color:#555;">
+      Bạn sẽ nhận điểm thưởng sau khi đơn hàng được hoàn tất.
+    </p>
   </div>
 
   <form action="/checkout" method="POST" style="display:grid;gap:1rem;">
     <div>
-      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Tên người nhận</label>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Số nhà</label>
       <input
         type="text"
-        name="customerName"
+        name="number"
+        value="<%= (shippingAddress && shippingAddress.number) || '' %>"
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
         required
+      />
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Đường</label>
+      <input
+        type="text"
+        name="street"
+        value="<%= (shippingAddress && shippingAddress.street) || '' %>"
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+        required
+      />
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Quận/Huyện</label>
+      <input
+        type="text"
+        name="district"
+        value="<%= (shippingAddress && shippingAddress.district) || '' %>"
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+        required
+      />
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Tỉnh/Thành phố</label>
+      <input
+        type="text"
+        name="city"
+        value="<%= (shippingAddress && shippingAddress.city) || '' %>"
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+        required
+      />
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Phí vận chuyển (₫)</label>
+      <input
+        type="number"
+        min="0"
+        step="1000"
+        name="shippingFee"
+        value="<%= (formData && formData.shippingFee !== undefined) ? formData.shippingFee : summary.shippingFee %>"
         style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
       />
     </div>
 
     <div>
-      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Số điện thoại</label>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Mã giảm giá</label>
       <input
         type="text"
-        name="phone"
-        required
+        name="couponCode"
+        value="<%= (formData && formData.couponCode) || (coupon && coupon.code) || '' %>"
         style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+        placeholder="Nhập mã giảm giá (nếu có)"
       />
+      <% if (coupon) { %>
+        <div style="font-size:.8rem;color:#2e6b2e;margin-top:.25rem;">
+          Đang áp dụng mã <strong><%= coupon.code %></strong>
+        </div>
+      <% } %>
     </div>
 
     <div>
-      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Địa chỉ giao hàng</label>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Điểm sử dụng (Bạn có <%= loyaltyPoint %> điểm)</label>
+      <input
+        type="number"
+        min="0"
+        name="pointsToUse"
+        value="<%= (formData && formData.pointsToUse) || '' %>"
+        style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
+        placeholder="Nhập số điểm muốn dùng"
+      />
+      <p style="font-size:.75rem;color:#666;margin:.25rem 0 0;">
+        1 điểm tương đương 1.000₫.
+      </p>
+    </div>
+
+    <div>
+      <label style="font-size:.9rem;font-weight:500;color:#2e6b2e;">Ghi chú cho shop</label>
       <textarea
-        name="address"
+        name="note"
         rows="3"
-        required
         style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid #cfe3cf;background:#fff;"
-      ></textarea>
+      ><%= (formData && formData.note) || '' %></textarea>
     </div>
 
     <button
       class="btn btn-primary"
       style="width:100%;text-align:center;font-size:1rem;padding:.75rem 1rem;">
-      Đặt hàng COD
+      Đặt hàng
     </button>
 
     <a href="/cart" style="text-align:center;font-size:.85rem;color:#2e6b2e;text-decoration:none;">

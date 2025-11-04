@@ -1,0 +1,97 @@
+<%- include('partials/header', { title: title || "Sửa sản phẩm" }) %>
+
+<section style="max-width:560px;">
+  <h2 class="section-title" style="margin-bottom:1rem;"><%= title || "Sửa sản phẩm" %></h2>
+
+  <form action="/admin/products/<%= product._id %>/edit" method="POST" enctype="multipart/form-data" style="display:grid;gap:1rem;">
+    <div>
+      <label class="form-label" for="name">Tên cây</label>
+      <input id="name" name="name" type="text" required class="form-input" value="<%= product.name %>">
+    </div>
+
+    <div>
+      <label class="form-label" for="slug">Slug</label>
+      <input id="slug" name="slug" type="text" class="form-input" value="<%= product.slug || '' %>" placeholder="vd: cay-luoi-ho">
+    </div>
+
+    <div>
+      <label class="form-label" for="price">Giá (VND)</label>
+      <input id="price" name="price" type="number" min="0" required class="form-input" value="<%= product.price %>">
+    </div>
+
+    <div>
+      <label class="form-label" for="type">Loại sản phẩm</label>
+      <input id="type" name="type" type="text" class="form-input" value="<%= product.type || '' %>">
+    </div>
+
+    <div>
+      <label class="form-label" for="categoryID">Danh mục</label>
+      <select id="categoryID" name="categoryID" class="form-input" required>
+        <option value="">— Chọn danh mục —</option>
+        <% (categories || []).forEach(c => { %>
+          <option value="<%= c._id %>" <%= String(product.categoryID) === String(c._id) ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div>
+      <label class="form-label" for="inStock">Tổng tồn kho</label>
+      <input id="inStock" name="inStock" type="number" min="0" class="form-input" value="<%= product.inStock || 0 %>">
+    </div>
+
+    <div>
+      <label class="form-label" for="img">Ảnh sản phẩm</label>
+      <% if (product.img) { %>
+        <div style="margin-bottom:.5rem;">
+          <img src="<%= product.img %>" alt="<%= product.name %>" style="width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #cfe3cf;">
+        </div>
+      <% } %>
+      <input id="img" name="img" type="file" accept="image/*" class="form-input">
+      <p class="hint">Chọn ảnh mới (tuỳ chọn). Để trống nếu giữ ảnh cũ.</p>
+    </div>
+
+    <div>
+      <label class="form-label" for="description">Mô tả</label>
+      <textarea id="description" name="description" rows="4" class="form-input"><%= product.description || "" %></textarea>
+    </div>
+
+    <fieldset style="border:1px solid #dfe9df;border-radius:12px;padding:1rem;">
+      <legend style="font-weight:600;color:#2e6b2e;">Chi tiết cây (Plant)</legend>
+      <label class="form-label" for="plantHeight">Chiều cao</label>
+      <input id="plantHeight" name="plantHeight" type="text" class="form-input" value="<%= plantDetail ? plantDetail.height : '' %>">
+
+      <label class="form-label" for="plantDifficulty">Độ khó chăm</label>
+      <input id="plantDifficulty" name="plantDifficulty" type="text" class="form-input" value="<%= plantDetail ? plantDetail.difficulty : '' %>">
+
+      <label class="form-label" for="plantLight">Nhu cầu ánh sáng</label>
+      <input id="plantLight" name="plantLight" type="text" class="form-input" value="<%= plantDetail ? plantDetail.lightRequirement : '' %>">
+
+      <label class="form-label" for="plantWater">Nhu cầu nước</label>
+      <input id="plantWater" name="plantWater" type="text" class="form-input" value="<%= plantDetail ? plantDetail.waterDemand : '' %>">
+    </fieldset>
+
+    <fieldset style="border:1px solid #dfe9df;border-radius:12px;padding:1rem;">
+      <legend style="font-weight:600;color:#2e6b2e;">Chi tiết chậu (Pot)</legend>
+      <label class="form-label" for="potMaterial">Chất liệu</label>
+      <input id="potMaterial" name="potMaterial" type="text" class="form-input" value="<%= potDetail ? potDetail.material : '' %>">
+
+      <label class="form-label" for="potPattern">Họa tiết</label>
+      <input id="potPattern" name="potPattern" type="text" class="form-input" value="<%= potDetail ? potDetail.pattern : '' %>">
+
+      <label class="form-label" for="potDimension">Kích thước</label>
+      <input id="potDimension" name="potDimension" type="text" class="form-input" value="<%= potDetail ? potDetail.dimension : '' %>">
+
+      <label class="form-label" for="potColor">Màu sắc</label>
+      <input id="potColor" name="potColor" type="text" class="form-input" value="<%= potDetail ? potDetail.color : '' %>">
+    </fieldset>
+
+    <div class="hint">Để trống trường không áp dụng với sản phẩm.</div>
+
+    <div style="display:flex; gap:.75rem;">
+      <button class="btn btn-primary">Lưu thay đổi</button>
+      <a class="btn" href="/admin/products">Huỷ</a>
+    </div>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,26 +1,68 @@
 const mongoose = require('mongoose');
 
-const orderSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  items: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-      name: String,
-      price: Number,
-      qty: Number,
-    },
-  ],
-  total: Number,
-  customerName: String,
-  phone: String,
-  address: String,
-  note: String,
-  status: {
-    type: String,
-    enum: ['pending', 'preparing', 'shipping', 'done', 'canceled'],
-    default: 'pending',
+const { Schema } = mongoose;
+
+const orderVariantSchema = new Schema(
+  {
+    variantName: { type: String, trim: true },
+    color: { type: String, trim: true },
+    size: { type: String, trim: true },
+    material: { type: String, trim: true },
   },
-  createdAt: { type: Date, default: Date.now },
+  { _id: false }
+);
+
+const orderItemSchema = new Schema(
+  {
+    productID: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+    productName: { type: String, required: true, trim: true },
+    price: { type: Number, required: true, min: 0 },
+    quantity: { type: Number, required: true, min: 1 },
+    subTotal: { type: Number, required: true, min: 0 },
+    variant: { type: orderVariantSchema, default: {} },
+  },
+  { _id: false }
+);
+
+const orderAddressSchema = new Schema(
+  {
+    number: { type: String, trim: true },
+    street: { type: String, trim: true },
+    district: { type: String, trim: true },
+    city: { type: String, trim: true },
+  },
+  { _id: false }
+);
+
+const orderSchema = new Schema(
+  {
+    userID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    address: { type: orderAddressSchema, required: true },
+    orderDate: { type: Date, default: Date.now },
+    status: {
+      type: String,
+      enum: ['pending', 'preparing', 'shipping', 'done', 'canceled'],
+      default: 'pending',
+    },
+    updateAt: { type: Date, default: Date.now },
+    items: { type: [orderItemSchema], required: true, default: [] },
+    shippingFee: { type: Number, default: 0 },
+    couponID: { type: Schema.Types.ObjectId, ref: 'Coupon', default: null },
+    discount: { type: Number, default: 0 },
+    pointUsed: { type: Number, default: 0 },
+    totalPrice: { type: Number, required: true, min: 0 },
+    pointEarned: { type: Number, default: 0 },
+    note: { type: String, trim: true },
+    pointRewarded: { type: Boolean, default: false },
+    cancelReason: { type: String, trim: true },
+    canceledAt: { type: Date, default: null },
+  },
+  { timestamps: true }
+);
+
+orderSchema.pre('save', function updateTimestamp(next) {
+  this.updateAt = new Date();
+  next();
 });
 
 module.exports = mongoose.model('Order', orderSchema);

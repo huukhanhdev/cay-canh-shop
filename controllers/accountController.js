@@ -11,7 +11,7 @@ exports.getProfilePage = async (req, res) => {
       return res.redirect('/login?msg=please-login');
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).lean();
 
     if (!user) {
       return res.status(404).send('Không tìm thấy tài khoản');
@@ -39,33 +39,44 @@ exports.postProfileUpdate = async (req, res) => {
       return res.redirect('/login?msg=please-login');
     }
 
-    const { fullName, email, phone, address } = req.body;
+    const {
+      name,
+      email,
+      addressNumber,
+      street,
+      district,
+      city,
+    } = req.body;
 
-    // cập nhật
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        fullName,
-        email,
-        phone,
-        address,
+    const updatePayload = {
+      name,
+      email,
+      shippingAddress: {
+        number: addressNumber,
+        street,
+        district,
+        city,
+        isDefault: true,
       },
-      { new: true } // trả về bản đã update
-    );
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updatePayload, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedUser) {
       return res.status(404).send('Không tìm thấy tài khoản để cập nhật');
     }
 
     // đồng bộ lại session cho đẹp (để header có thể show tên nếu sau này muốn)
-    req.session.user.fullName = updatedUser.fullName;
+    req.session.user.name = updatedUser.name;
     req.session.user.email = updatedUser.email;
-    req.session.user.phone = updatedUser.phone;
-    req.session.user.address = updatedUser.address;
+    req.session.user.loyaltyPoint = updatedUser.loyaltyPoint;
 
     res.render('account-profile', {
       title: 'Hồ sơ cá nhân',
-      user: updatedUser,
+      user: updatedUser.toObject(),
       message: null,
       success: 'Cập nhật thông tin thành công ✅',
     });

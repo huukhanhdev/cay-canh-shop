@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const Category = require('./models/Category');
 
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
@@ -13,6 +14,7 @@ const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const accountRoutes = require('./routes/accountRoutes');    // profile / account
 const cartCount = require('./middleware/cartCount');
+const categoriesToLocals = require('./middleware/categories');
 
 const { isAuthenticated, isAdmin } = require('./middleware/auth');
 const User = require('./models/User');
@@ -52,8 +54,9 @@ app.use(
   })
 );
 
-// ----- GẮN THÔNG TIN USER CHO VIEW (header dùng isLoggedIn, role, username) -----
+// ----- GẮN THÔNG TIN USER CHO VIEW (header dùng thông tin đăng nhập) -----
 app.use(isAuthenticated);
+app.use(categoriesToLocals);
 
 // ----- CART COUNT + helper format tiền -----
 app.use(cartCount);
@@ -106,17 +109,34 @@ mongoose
     console.log('✅ Đã kết nối MongoDB');
 
     // seed admin nếu chưa có
-    const adminExists = await User.findOne({ role: 'admin' });
+    const adminExists = await User.findOne({ isAdmin: true });
     if (!adminExists) {
       await User.create({
-        username: 'admin',
+        name: 'Administrator',
+        email: 'admin@caycanhshop.local',
         password: '123456',
-        role: 'admin',
-        // các field khác tuỳ User schema sau này (email, fullName,...)
+        isAdmin: true,
       });
-      console.log('✅ Admin mặc định: admin / 123456');
+      console.log('✅ Admin mặc định: admin@caycanhshop.local / 123456');
     } else {
       console.log('ℹ️ Admin đã tồn tại');
+    }
+
+    // đảm bảo index phù hợp (chuyển từ username -> email)
+    try {
+      const indexes = await User.collection.indexes();
+      const usernameIndex = indexes.find((idx) => idx.key && idx.key.username);
+      if (usernameIndex) {
+        await User.collection.dropIndex(usernameIndex.name);
+        console.log('🔁 Đã xoá index cũ username_1 trên users.');
+      }
+    } catch (err) {
+      console.warn('⚠️ Không thể xoá index username:', err.message);
+    }
+    try {
+      await User.collection.createIndex({ email: 1 }, { unique: true });
+    } catch (err) {
+      console.warn('⚠️ Không thể tạo index email:', err.message);
     }
 
     app.listen(PORT, () => {
@@ -126,3 +146,25 @@ mongoose
   .catch((err) => {
     console.error('❌ Lỗi kết nối MongoDB:', err.message);
   });
+// sau khi connect DB
+const seedIfEmpty = async () => {
+  const count = await Category.countDocuments();
+  if (count === 0) {
+    await Category.insertMany([
+      { name: 'Cây để bàn', slug: 'cay-de-ban' },
+      { name: 'Cây trong nhà', slug: 'cay-trong-nha' },
+      { name: 'Cây phong thủy', slug: 'cay-phong-thuy' }
+    ]);
+    console.log('✅ Seed categories mặc định');
+  }
+};
+seedIfEmpty();
+app.use(async (req, res, next) => {
+  try {
+    const cats = await Category.find().sort({ name: 1 }).lean();
+    res.locals.headerCategories = cats; // dùng riêng cho header
+    next();
+  } catch (e) {
+    next(e);
+  }
+});
