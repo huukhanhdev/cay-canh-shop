@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Env secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs
+*.log
+
+# OS / editor stuff
+.DS_Store
+.vscode/
+.idea/
+
+# Upload images saved at runtime
+public/uploads/
+
+# Mongo data if you ever mount to local
+data/
+dump/
+
+# Docker intermediate stuff
+*.pid
