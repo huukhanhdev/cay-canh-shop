@@ -1,0 +1,16 @@
+<%- include('partials/header', { title }) %>
+<h2>Đăng ký</h2>
+<% if (typeof error !== 'undefined') { %><p style="color:red"><%= error %></p><% } %>
+<% if (locals.msg === 'register_required') { %>
+  <p style="color:#c55">Vui lòng hoàn tất đăng ký bằng cách xác thực OTP đã gửi trước đó.</p>
+<% } %>
+<form method="POST" action="/auth/register">
+  <label>Email</label><input name="email" type="email" required>
+  <label>Họ tên</label><input name="fullName" required>
+  <label>Địa chỉ giao hàng</label>
+  <input name="street" placeholder="Số nhà, đường">
+  <input name="district" placeholder="Quận/Huyện">
+  <input name="city" placeholder="Tỉnh/TP">
+  <button>Đăng ký</button>
+</form>
+<%- include('partials/footer') %>

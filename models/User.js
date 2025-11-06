@@ -1,29 +1,43 @@
-// models/Cart.js
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-const cartItemSchema = new mongoose.Schema(
-  {
-    productID: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-    variantID: { type: mongoose.Schema.Types.ObjectId, ref: 'Variant', default: null }, // nếu đã tách biến thể
-    quantity: { type: Number, required: true, min: 1, default: 1 },
+const ShippingAddressSchema = new mongoose.Schema({
+  fullName: { type: String, trim: true },
+  phone: { type: String, trim: true },
+  street: { type: String, trim: true },
+  district: { type: String, trim: true },
+  city: { type: String, trim: true },
+  isDefault: { type: Boolean, default: false }
+}, { _id: false });
 
-    // Tùy chọn: snapshot giá tại thời điểm đưa vào giỏ (để hiển thị nhanh),
-    // nhưng KHÔNG dùng làm căn cứ thanh toán cuối cùng.
-    unitPriceSnapshot: { type: Number, min: 0 },
-  },
-  { _id: false }
-);
+const OTPSchema = new mongoose.Schema({
+  code: String,
+  purpose: { type: String, enum: ['register','reset'], required: true },
+  expiresAt: Date,
+  attempts: { type: Number, default: 0 },   // chống brute-force
+}, { _id: false });
 
-const cartSchema = new mongoose.Schema(
-  {
-    userID: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    items: { type: [cartItemSchema], default: [] },
-    // không có discount / shippingFee / pointUsed ở đây
-    updatedAt: { type: Date, default: Date.now },
-  },
-  { timestamps: true }
-);
+const UserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  fullName: { type: String, required: true, trim: true },
+  password: { type: String },                        // đăng ký xong mới đặt, hoặc đặt trong reset
+  shippingAddresses: { type: [ShippingAddressSchema], default: [] },
+  isVerified: { type: Boolean, default: false },     // verified qua OTP đăng ký
+  otp: OTPSchema,                                     // lưu OTP hiện thời
+  loyaltyPoints: { type: Number, default: 0 },
+  role: { type: String, enum: ['customer','admin'], default: 'customer' }
+}, { timestamps: true });
 
-cartSchema.index({ userID: 1 });
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password') || !this.password) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
-module.exports = mongoose.model('Cart', cartSchema);
+UserSchema.methods.comparePassword = function(raw) {
+  if (!this.password) return false;
+  return bcrypt.compare(raw, this.password);
+};
+
+module.exports = mongoose.model('User', UserSchema);
